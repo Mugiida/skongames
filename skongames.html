@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>SKON Games - Fun for Everyone!</title>
+		<title>SKON Games - VIP Access</title>
 		<style>
 			* {
 				margin: 0;
@@ -13,23 +13,24 @@
 			}
 
 			body {
-				background-color: #f0f2f5;
-				color: #333;
+				background-color: #1a0000;
+				color: #fff;
 			}
 
 			header {
-				background: linear-gradient(135deg, #6e48aa, #9d50bb);
+				background: linear-gradient(135deg, #8b0000, #ff0000);
 				color: white;
 				padding: 20px 0;
 				text-align: center;
-				box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+				box-shadow: 0 4px 12px rgba(139, 0, 0, 0.5);
+				border-bottom: 3px solid #500000;
 			}
 
 			.logo {
 				font-size: 2.5rem;
 				font-weight: bold;
 				margin-bottom: 10px;
-				text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+				text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 			}
 
 			.tagline {
@@ -51,24 +52,25 @@
 			}
 
 			.game-card {
-				background: white;
+				background: #2a0000;
 				border-radius: 10px;
 				overflow: hidden;
-				box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+				box-shadow: 0 5px 15px rgba(139, 0, 0, 0.3);
 				transition: transform 0.3s, box-shadow 0.3s;
 				cursor: pointer;
+				border: 1px solid #500000;
 			}
 
 			.game-card:hover {
 				transform: translateY(-5px);
-				box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+				box-shadow: 0 8px 20px rgba(255, 0, 0, 0.4);
 			}
 
 			.game-thumbnail {
 				width: 100%;
 				height: auto;
 				object-fit: contain;
-				border-bottom: 3px solid #6e48aa;
+				border-bottom: 3px solid #8b0000;
 			}
 
 			.game-info {
@@ -78,18 +80,18 @@
 			.game-title {
 				font-size: 1.2rem;
 				margin-bottom: 8px;
-				color: #444;
+				color: #fff;
 			}
 
 			.game-description {
 				font-size: 0.9rem;
-				color: #666;
+				color: #ccc;
 				margin-bottom: 12px;
 			}
 
 			.play-button {
 				display: inline-block;
-				background: linear-gradient(135deg, #6e48aa, #9d50bb);
+				background: linear-gradient(135deg, #8b0000, #ff4500);
 				color: white;
 				padding: 8px 15px;
 				border-radius: 20px;
@@ -101,6 +103,7 @@
 
 			.play-button:hover {
 				transform: scale(1.05);
+				background: linear-gradient(135deg, #ff0000, #ff6347);
 			}
 
 			.category-filter {
@@ -113,18 +116,19 @@
 
 			.category-btn {
 				padding: 8px 15px;
-				background: white;
+				background: #500000;
 				border: none;
 				border-radius: 20px;
 				cursor: pointer;
 				font-weight: bold;
+				color: white;
 				box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 				transition: all 0.2s;
 			}
 
 			.category-btn:hover,
 			.category-btn.active {
-				background: #6e48aa;
+				background: #ff0000;
 				color: white;
 			}
 
@@ -132,8 +136,97 @@
 				text-align: center;
 				padding: 20px;
 				margin-top: 50px;
-				background-color: #333;
+				background-color: #500000;
 				color: white;
+				border-top: 3px solid #8b0000;
+			}
+
+			.vip-btn {
+				position: fixed;
+				bottom: 20px;
+				right: 20px;
+				padding: 10px 20px;
+				background: linear-gradient(135deg, #ffd700, #ffa500);
+				color: #8b0000;
+				border: none;
+				border-radius: 20px;
+				cursor: pointer;
+				font-weight: bold;
+				box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+				z-index: 100;
+				transition: transform 0.3s;
+			}
+
+			.vip-btn:hover {
+				transform: scale(1.1);
+			}
+
+			.modal {
+				display: none;
+				position: fixed;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				background-color: rgba(0, 0, 0, 0.8);
+				z-index: 200;
+				justify-content: center;
+				align-items: center;
+			}
+
+			.modal-content {
+				background: linear-gradient(135deg, #500000, #8b0000);
+				padding: 30px;
+				border-radius: 10px;
+				text-align: center;
+				max-width: 400px;
+				width: 90%;
+				border: 2px solid #ffd700;
+				box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+			}
+
+			.modal h2 {
+				color: #ffd700;
+				margin-bottom: 20px;
+			}
+
+			.modal input {
+				width: 100%;
+				padding: 10px;
+				margin: 10px 0;
+				border-radius: 5px;
+				border: 1px solid #ffd700;
+				background-color: #2a0000;
+				color: white;
+			}
+
+			.modal button {
+				padding: 10px 20px;
+				background: linear-gradient(135deg, #ffd700, #ffa500);
+				color: #8b0000;
+				border: none;
+				border-radius: 5px;
+				cursor: pointer;
+				font-weight: bold;
+				margin-top: 10px;
+			}
+
+			.access-denied {
+				position: fixed;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				background-color: rgba(0, 0, 0, 0.9);
+				z-index: 300;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				flex-direction: column;
+				color: #ff0000;
+				font-size: 2rem;
+				text-align: center;
+				display: none;
 			}
 
 			@media (max-width: 768px) {
@@ -150,7 +243,7 @@
 	<body>
 		<header>
 			<div class="logo">SKON GAMES</div>
-			<div class="tagline">Fun games for everyone!</div>
+			<div class="tagline">VIP Access - Red Zone</div>
 		</header>
 
 		<div class="container">
@@ -182,8 +275,6 @@
 						<a href="pixeljumper.html" class="play-button">Play Now</a>
 					</div>
 				</div>
-
-				<!-- Game 2 -->
 
 				<!-- Game 3 -->
 				<div class="game-card" data-category="action">
@@ -250,12 +341,27 @@
 						<a href="memorycatcher.html" class="play-button">Play Now</a>
 					</div>
 				</div>
-
-				<!-- Add more game cards as needed -->
 			</div>
 		</div>
 
-		<footer>&copy; 2023 SKON Games. All rights reserved.</footer>
+		<button class="vip-btn">VIP MODE</button>
+
+		<div class="modal" id="vipModal">
+			<div class="modal-content">
+				<h2>VIP ACCESS</h2>
+				<p>Enter your name to unlock VIP features:</p>
+				<input type="text" id="vipName" placeholder="Your name" />
+				<button id="checkVip">SUBMIT</button>
+			</div>
+		</div>
+
+		<div class="access-denied" id="accessDenied">
+			<h2>ACCESS DENIED</h2>
+			<p>Sorry, you're not a VIP person</p>
+			<p>Redirecting you back...</p>
+		</div>
+
+		<footer>&copy; 2023 SKON Games VIP. All rights reserved.</footer>
 
 		<script>
 			// Category filtering functionality
@@ -292,6 +398,42 @@
 						card.style.transform = "translateY(0)";
 					}, 100 * index);
 				});
+			});
+
+			// VIP Access Control
+			const vipBtn = document.querySelector(".vip-btn");
+			const vipModal = document.getElementById("vipModal");
+			const checkVipBtn = document.getElementById("checkVip");
+			const vipNameInput = document.getElementById("vipName");
+			const accessDenied = document.getElementById("accessDenied");
+
+			vipBtn.addEventListener("click", () => {
+				vipModal.style.display = "flex";
+			});
+
+			checkVipBtn.addEventListener("click", () => {
+				const name = vipNameInput.value.trim().toLowerCase();
+				const validNames = ["sara", "sara ouni", "saraouni"];
+
+				if (validNames.includes(name)) {
+					alert("Welcome back, Sara! VIP access granted.");
+					vipModal.style.display = "none";
+					window.location.href = "vip.html";
+				} else {
+					vipModal.style.display = "none";
+					accessDenied.style.display = "flex";
+
+					setTimeout(() => {
+						window.location.reload();
+					}, 3000);
+				}
+			});
+
+			// Close modal if clicked outside
+			window.addEventListener("click", (event) => {
+				if (event.target === vipModal) {
+					vipModal.style.display = "none";
+				}
 			});
 		</script>
 	</body>
