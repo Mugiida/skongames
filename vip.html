@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>SARA - Do You Dare?</title>
+		<style>
+			body {
+				background-color: #000;
+				color: #ff0000;
+				font-family: "Courier New", monospace;
+				margin: 0;
+				padding: 0;
+				overflow-x: hidden;
+				text-align: center;
+			}
+
+			.container {
+				max-width: 800px;
+				margin: 0 auto;
+				padding: 20px;
+				position: relative;
+			}
+
+			h1 {
+				font-size: 4em;
+				text-shadow: 0 0 10px #ff0000;
+				margin-bottom: 20px;
+				letter-spacing: 5px;
+			}
+
+			.warning {
+				border: 2px solid #ff0000;
+				padding: 20px;
+				margin: 30px 0;
+				background-color: rgba(255, 0, 0, 0.1);
+				box-shadow: 0 0 15px #ff0000;
+				animation: pulse 3s infinite;
+			}
+
+			@keyframes pulse {
+				0% {
+					opacity: 0.8;
+				}
+				50% {
+					opacity: 1;
+				}
+				100% {
+					opacity: 0.8;
+				}
+			}
+
+			.play-btn {
+				background-color: #000;
+				color: #ff0000;
+				border: 2px solid #ff0000;
+				padding: 15px 40px;
+				font-size: 1.5em;
+				cursor: pointer;
+				margin-top: 30px;
+				transition: all 0.3s;
+				text-transform: uppercase;
+				letter-spacing: 3px;
+			}
+
+			.play-btn:hover {
+				background-color: #ff0000;
+				color: #000;
+				box-shadow: 0 0 20px #ff0000;
+			}
+
+			.footnote {
+				margin-top: 50px;
+				font-size: 0.8em;
+				color: #555;
+			}
+
+			/* Creepy flicker effect */
+			.flicker {
+				animation: flicker 0.5s infinite alternate;
+			}
+
+			@keyframes flicker {
+				0% {
+					opacity: 1;
+				}
+				50% {
+					opacity: 0.7;
+				}
+				100% {
+					opacity: 1;
+				}
+			}
+
+			/* Glitch effect on hover */
+			.glitch {
+				position: relative;
+			}
+
+			.glitch:hover {
+				text-shadow: 2px 2px 0 #ff0000, -2px -2px 0 #00ffff;
+				animation: glitch 0.3s linear infinite;
+			}
+
+			@keyframes glitch {
+				0% {
+					transform: translate(0);
+				}
+				20% {
+					transform: translate(-2px, 2px);
+				}
+				40% {
+					transform: translate(2px, -2px);
+				}
+				60% {
+					transform: translate(-2px, -2px);
+				}
+				80% {
+					transform: translate(2px, 2px);
+				}
+				100% {
+					transform: translate(0);
+				}
+			}
+			.game-image {
+				width: 300px; /* Adjust size as needed */
+				height: auto;
+				border: 2px solid #ff0000;
+				box-shadow: 0 0 20px #ff0000;
+				filter: grayscale(50%) contrast(150%) brightness(70%) sepia(30%);
+				margin: 20px auto;
+				transition: all 0.5s;
+				border-radius: 5px;
+				opacity: 0.9;
+			}
+
+			.game-image:hover {
+				filter: grayscale(0%) contrast(200%) brightness(100%) sepia(50%)
+					hue-rotate(10deg);
+				transform: scale(1.02);
+				box-shadow: 0 0 30px #ff0000;
+				cursor: pointer;
+			}
+
+			/* Optional: Add a pulsating glow */
+			@keyframes creepy-glow {
+				0% {
+					box-shadow: 0 0 10px #ff0000;
+				}
+				50% {
+					box-shadow: 0 0 30px #ff0000;
+				}
+				100% {
+					box-shadow: 0 0 10px #ff0000;
+				}
+			}
+
+			.game-image.glowing {
+				animation: creepy-glow 3s infinite;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<h1 class="glitch">SARA</h1>
+			<img
+				src="https://thumbs2.imgbox.com/bb/b2/QzOsxFmX_t.png
+"
+				class="game-image glowing"
+				alt="SARA's Game"
+				title="Do you dare look closer?"
+			/>
+			<p><em>"Some games should never be played..."</em></p>
+
+			<div class="warning flicker">
+				<h2>⚠️ WARNING ⚠️</h2>
+				<p>This game is <strong>extremely dangerous</strong>.</p>
+				<p>Many who played never returned.</p>
+				<p>Proceed at your own risk.</p>
+			</div>
+
+			<button class="play-btn" id="playButton">PLAY NOW</button>
+
+			<div class="footnote">
+				<p>By clicking "PLAY NOW," you accept the consequences.</p>
+			</div>
+		</div>
+
+		<script>
+			document
+				.getElementById("playButton")
+				.addEventListener("click", function () {
+					// Replace with your actual game page or creepy effect
+					alert("SARA is watching... Are you sure?");
+
+					// Uncomment to redirect to a game page:
+					// window.location.href = "game.html";
+
+					// Or add a creepy effect (e.g., screen distortion)
+					document.body.style.background =
+						"#000 url('https://i.gifer.com/7I9s.gif')";
+					document.body.innerHTML =
+						"<h1 style='color:red; margin-top:20%;'>SARA HAS CHOSEN YOU...</h1>";
+					window.location.href = "sara.html";
+				});
+		</script>
+	</body>
+</html>
