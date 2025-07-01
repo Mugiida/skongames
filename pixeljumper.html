@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+		/>
+		<title>Pixel Jumper!</title>
+		<style>
+			body {
+				margin: 0;
+				overflow: hidden;
+				background-color: #6b8cff;
+				font-family: "Press Start 2P", cursive;
+				image-rendering: pixelated;
+				image-rendering: crisp-edges;
+				touch-action: manipulation;
+			}
+
+			#game-container {
+				position: relative;
+				width: 100vw;
+				height: 70vh;
+				margin: 0 auto;
+				background-color: #6b8cff;
+				border-bottom: 4px solid #000;
+				overflow: hidden;
+			}
+
+			#ground {
+				position: absolute;
+				bottom: 0;
+				width: 100%;
+				height: 40px;
+				background-color: #6b3e1a;
+				border-top: 4px solid #000;
+			}
+
+			#player {
+				position: absolute;
+				width: 32px;
+				height: 48px;
+				bottom: 40px;
+				left: 100px;
+				background-color: #e74c3c;
+				border: 2px solid #000;
+				z-index: 10;
+			}
+
+			/* Pixel art player face */
+			#player::before {
+				content: "";
+				position: absolute;
+				width: 24px;
+				height: 24px;
+				top: 4px;
+				left: 4px;
+				background-color: #f1c40f;
+				border: 2px solid #000;
+			}
+
+			/* Pixel art player eyes */
+			#player::after {
+				content: "";
+				position: absolute;
+				width: 6px;
+				height: 6px;
+				top: 10px;
+				left: 10px;
+				background-color: #000;
+			}
+
+			.platform {
+				position: absolute;
+				background-color: #2ecc71;
+				border: 2px solid #000;
+			}
+
+			.coin {
+				position: absolute;
+				width: 16px;
+				height: 16px;
+				background-color: #f1c40f;
+				border: 2px solid #000;
+				border-radius: 50%;
+				z-index: 5;
+			}
+
+			.coin::before {
+				content: "";
+				position: absolute;
+				width: 8px;
+				height: 8px;
+				top: 2px;
+				left: 2px;
+				background-color: #f39c12;
+				border-radius: 50%;
+			}
+
+			#score-display {
+				position: absolute;
+				top: 10px;
+				left: 10px;
+				font-size: 16px;
+				color: white;
+				text-shadow: 2px 2px 0 #000;
+				z-index: 15;
+			}
+
+			#start-screen {
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				background-color: rgba(0, 0, 0, 0.7);
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				align-items: center;
+				color: white;
+				z-index: 20;
+				text-align: center;
+			}
+
+			#start-button {
+				padding: 10px 20px;
+				font-size: 16px;
+				background-color: #e74c3c;
+				color: white;
+				border: 2px solid #000;
+				font-family: "Press Start 2P", cursive;
+				cursor: pointer;
+				margin-top: 20px;
+			}
+
+			h1 {
+				font-size: 24px;
+				color: #f1c40f;
+				margin-bottom: 20px;
+				text-shadow: 3px 3px 0 #000;
+			}
+
+			.cloud {
+				position: absolute;
+				background-color: white;
+				border: 2px solid #000;
+			}
+
+			/* Mobile controls */
+			#controls {
+				display: flex;
+				justify-content: space-between;
+				width: 100%;
+				padding: 20px 0;
+				background-color: #333;
+				position: relative;
+			}
+
+			.d-pad {
+				display: grid;
+				grid-template-columns: repeat(3, 1fr);
+				grid-template-rows: repeat(3, 1fr);
+				gap: 5px;
+				width: 150px;
+				height: 150px;
+				margin-left: 20px;
+			}
+
+			.control-btn {
+				background-color: #555;
+				border: 2px solid #000;
+				border-radius: 5px;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				color: white;
+				font-size: 24px;
+				user-select: none;
+				-webkit-user-select: none;
+				touch-action: manipulation;
+			}
+
+			.control-btn:active {
+				background-color: #777;
+			}
+
+			#up-btn {
+				grid-column: 2;
+				grid-row: 1;
+			}
+
+			#left-btn {
+				grid-column: 1;
+				grid-row: 2;
+			}
+
+			#right-btn {
+				grid-column: 3;
+				grid-row: 2;
+			}
+
+			#jump-btn {
+				width: 120px;
+				height: 60px;
+				background-color: #e74c3c;
+				margin-right: 20px;
+				align-self: center;
+				font-size: 18px;
+			}
+
+			@font-face {
+				font-family: "Press Start 2P";
+				src: url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
+			}
+
+			/* Responsive adjustments */
+			@media (min-width: 768px) {
+				#controls {
+					display: none;
+				}
+
+				#game-container {
+					width: 800px;
+					height: 400px;
+					margin: 20px auto;
+					border: 4px solid #000;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<div id="game-container">
+			<div id="ground"></div>
+			<div id="player"></div>
+			<div id="score-display">COINS: 0</div>
+
+			<div id="start-screen">
+				<h1>PIXEL JUMPER!</h1>
+				<p>Use ARROW KEYS or on-screen buttons</p>
+				<p>Collect all the coins!</p>
+				<button id="start-button">START GAME</button>
+			</div>
+		</div>
+
+		<div id="controls">
+			<div class="d-pad">
+				<div id="up-btn" class="control-btn">↑</div>
+				<div id="left-btn" class="control-btn">←</div>
+				<div id="right-btn" class="control-btn">→</div>
+			</div>
+			<div id="jump-btn" class="control-btn">JUMP</div>
+		</div>
+
+		<script>
+			const gameContainer = document.getElementById("game-container");
+			const player = document.getElementById("player");
+			const ground = document.getElementById("ground");
+			const scoreDisplay = document.getElementById("score-display");
+			const startScreen = document.getElementById("start-screen");
+			const startButton = document.getElementById("start-button");
+
+			// Mobile controls
+			const upBtn = document.getElementById("up-btn");
+			const leftBtn = document.getElementById("left-btn");
+			const rightBtn = document.getElementById("right-btn");
+			const jumpBtn = document.getElementById("jump-btn");
+
+			let score = 0;
+			let gameActive = false;
+			let isJumping = false;
+			let velocityY = 0;
+			let gravity = 0.5;
+			let playerX = 100;
+			let playerY =
+				gameContainer.offsetHeight - ground.offsetHeight - player.offsetHeight;
+			let platforms = [];
+			let coins = [];
+			let clouds = [];
+
+			// Game setup
+			function setupGame() {
+				// Create platforms
+				createPlatform(300, 250, 150, 20);
+				createPlatform(600, 200, 100, 20);
+				createPlatform(200, 150, 100, 20);
+				createPlatform(500, 100, 150, 20);
+
+				// Create coins
+				createCoin(350, 220);
+				createCoin(650, 170);
+				createCoin(250, 120);
+				createCoin(550, 70);
+				createCoin(150, 300);
+
+				// Create clouds
+				createCloud(100, 50, 60, 30);
+				createCloud(400, 80, 80, 40);
+				createCloud(700, 60, 70, 35);
+			}
+
+			function createPlatform(x, y, width, height) {
+				const platform = document.createElement("div");
+				platform.className = "platform";
+				platform.style.left = x + "px";
+				platform.style.top = y + "px";
+				platform.style.width = width + "px";
+				platform.style.height = height + "px";
+				gameContainer.appendChild(platform);
+
+				platforms.push({
+					element: platform,
+					x: x,
+					y: y,
+					width: width,
+					height: height,
+				});
+			}
+
+			function createCoin(x, y) {
+				const coin = document.createElement("div");
+				coin.className = "coin";
+				coin.style.left = x + "px";
+				coin.style.top = y + "px";
+				gameContainer.appendChild(coin);
+
+				coins.push({
+					element: coin,
+					x: x,
+					y: y,
+					collected: false,
+				});
+			}
+
+			function createCloud(x, y, width, height) {
+				const cloud = document.createElement("div");
+				cloud.className = "cloud";
+				cloud.style.left = x + "px";
+				cloud.style.top = y + "px";
+				cloud.style.width = width + "px";
+				cloud.style.height = height + "px";
+				gameContainer.appendChild(cloud);
+
+				clouds.push({
+					element: cloud,
+					x: x,
+					y: y,
+					width: width,
+					height: height,
+				});
+			}
+
+			// Player movement
+			const keys = {
+				left: false,
+				right: false,
+				up: false,
+			};
+
+			// Keyboard controls
+			document.addEventListener("keydown", (e) => {
+				if (!gameActive) return;
+
+				if (e.key === "ArrowLeft") keys.left = true;
+				if (e.key === "ArrowRight") keys.right = true;
+				if (e.key === " " || e.key === "ArrowUp") {
+					if (!isJumping) {
+						isJumping = true;
+						velocityY = -12;
+					}
+				}
+			});
+
+			document.addEventListener("keyup", (e) => {
+				if (e.key === "ArrowLeft") keys.left = false;
+				if (e.key === "ArrowRight") keys.right = false;
+			});
+
+			// Mobile touch controls
+			function setupMobileControls() {
+				// Left button
+				leftBtn.addEventListener("touchstart", (e) => {
+					e.preventDefault();
+					keys.left = true;
+				});
+				leftBtn.addEventListener("touchend", (e) => {
+					e.preventDefault();
+					keys.left = false;
+				});
+				leftBtn.addEventListener("mousedown", () => (keys.left = true));
+				leftBtn.addEventListener("mouseup", () => (keys.left = false));
+				leftBtn.addEventListener("mouseleave", () => (keys.left = false));
+
+				// Right button
+				rightBtn.addEventListener("touchstart", (e) => {
+					e.preventDefault();
+					keys.right = true;
+				});
+				rightBtn.addEventListener("touchend", (e) => {
+					e.preventDefault();
+					keys.right = false;
+				});
+				rightBtn.addEventListener("mousedown", () => (keys.right = true));
+				rightBtn.addEventListener("mouseup", () => (keys.right = false));
+				rightBtn.addEventListener("mouseleave", () => (keys.right = false));
+
+				// Up button
+				upBtn.addEventListener("touchstart", (e) => {
+					e.preventDefault();
+					if (!isJumping) {
+						isJumping = true;
+						velocityY = -12;
+					}
+				});
+				upBtn.addEventListener("mousedown", () => {
+					if (!isJumping) {
+						isJumping = true;
+						velocityY = -12;
+					}
+				});
+
+				// Jump button
+				jumpBtn.addEventListener("touchstart", (e) => {
+					e.preventDefault();
+					if (!isJumping) {
+						isJumping = true;
+						velocityY = -12;
+					}
+				});
+				jumpBtn.addEventListener("mousedown", () => {
+					if (!isJumping) {
+						isJumping = true;
+						velocityY = -12;
+					}
+				});
+			}
+
+			function movePlayer() {
+				// Horizontal movement
+				if (keys.left) playerX -= 5;
+				if (keys.right) playerX += 5;
+
+				// Boundary checking
+				if (playerX < 0) playerX = 0;
+				if (playerX > gameContainer.offsetWidth - player.offsetWidth) {
+					playerX = gameContainer.offsetWidth - player.offsetWidth;
+				}
+
+				// Vertical movement (jumping/falling)
+				velocityY += gravity;
+				playerY += velocityY;
+
+				// Ground collision
+				if (
+					playerY >
+					gameContainer.offsetHeight - ground.offsetHeight - player.offsetHeight
+				) {
+					playerY =
+						gameContainer.offsetHeight -
+						ground.offsetHeight -
+						player.offsetHeight;
+					isJumping = false;
+					velocityY = 0;
+				}
+
+				// Platform collision
+				let onPlatform = false;
+				platforms.forEach((platform) => {
+					if (
+						playerX + player.offsetWidth > platform.x &&
+						playerX < platform.x + platform.width &&
+						playerY + player.offsetHeight >= platform.y &&
+						playerY + player.offsetHeight <= platform.y + platform.height &&
+						velocityY > 0
+					) {
+						playerY = platform.y - player.offsetHeight;
+						isJumping = false;
+						velocityY = 0;
+						onPlatform = true;
+					}
+				});
+
+				// Update player position
+				player.style.left = playerX + "px";
+				player.style.top = playerY + "px";
+
+				// Check coin collection
+				coins.forEach((coin, index) => {
+					if (
+						!coin.collected &&
+						playerX + player.offsetWidth > coin.x &&
+						playerX < coin.x + 16 &&
+						playerY + player.offsetHeight > coin.y &&
+						playerY < coin.y + 16
+					) {
+						coin.collected = true;
+						gameContainer.removeChild(coin.element);
+						score += 10;
+						scoreDisplay.textContent = `COINS: ${score}`;
+
+						// Play a simple beep sound
+						const beep = new Audio(
+							"data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YU..."
+						);
+						beep.volume = 0.2;
+						beep.play().catch((e) => {});
+
+						// Check if all coins collected
+						if (coins.every((c) => c.collected)) {
+							setTimeout(() => {
+								alert("You won! Collected all coins!");
+								resetGame();
+							}, 500);
+						}
+					}
+				});
+			}
+
+			function updateGame() {
+				if (!gameActive) return;
+
+				movePlayer();
+
+				// Move clouds for parallax effect
+				clouds.forEach((cloud) => {
+					cloud.x -= 0.5;
+					if (cloud.x < -cloud.width) {
+						cloud.x = gameContainer.offsetWidth;
+					}
+					cloud.element.style.left = cloud.x + "px";
+				});
+
+				requestAnimationFrame(updateGame);
+			}
+
+			function startGame() {
+				score = 0;
+				scoreDisplay.textContent = `COINS: ${score}`;
+				gameActive = true;
+				startScreen.style.display = "none";
+
+				// Reset player position
+				playerX = 100;
+				playerY =
+					gameContainer.offsetHeight -
+					ground.offsetHeight -
+					player.offsetHeight;
+				player.style.left = playerX + "px";
+				player.style.top = playerY + "px";
+
+				// Clear existing game elements
+				platforms.forEach((p) => gameContainer.removeChild(p.element));
+				coins.forEach((c) => {
+					if (c.element.parentNode) gameContainer.removeChild(c.element);
+				});
+				clouds.forEach((c) => gameContainer.removeChild(c.element));
+				platforms = [];
+				coins = [];
+				clouds = [];
+
+				// Setup new game
+				setupGame();
+
+				// Start game loop
+				updateGame();
+			}
+
+			function resetGame() {
+				gameActive = false;
+				startScreen.style.display = "flex";
+			}
+
+			// Initialize the game
+			startButton.addEventListener("click", startGame);
+			setupMobileControls();
+		</script>
+	</body>
+</html>

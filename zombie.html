@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+		/>
+		<title>Zombie Defense TD | SKON Games</title>
+		<style>
+			* {
+				margin: 0;
+				padding: 0;
+				box-sizing: border-box;
+				touch-action: manipulation;
+			}
+
+			body {
+				font-family: "Arial", sans-serif;
+				background-color: #0a0a0a;
+				color: white;
+				overflow: hidden;
+				height: 100vh;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+			}
+
+			#game-container {
+				position: relative;
+				width: 100%;
+				max-width: 500px;
+				height: 70vh;
+				background-color: #111;
+				border: 2px solid #333;
+				overflow: hidden;
+			}
+
+			#path {
+				position: absolute;
+				bottom: 0;
+				width: 100%;
+				height: 80px;
+				background: repeating-linear-gradient(
+					90deg,
+					#2a2a2a,
+					#2a2a2a 20px,
+					#333 20px,
+					#333 40px
+				);
+			}
+
+			#base {
+				position: absolute;
+				width: 60px;
+				height: 60px;
+				right: 20px;
+				bottom: 80px;
+				background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="%238B0000"/><rect x="20" y="20" width="60" height="60" fill="%23FF0000" stroke="%23600" stroke-width="5"/></svg>');
+				background-size: cover;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				font-weight: bold;
+				font-size: 10px;
+				color: white;
+				text-shadow: 1px 1px 2px black;
+			}
+
+			.health-bar {
+				position: absolute;
+				top: -10px;
+				width: 100%;
+				height: 5px;
+				background: linear-gradient(90deg, red, orange);
+			}
+
+			.tower {
+				position: absolute;
+				width: 40px;
+				height: 40px;
+				background-size: contain;
+				background-repeat: no-repeat;
+				background-position: center;
+				z-index: 10;
+				transform: translate(-50%, -50%);
+			}
+
+			.tower::after {
+				content: "";
+				position: absolute;
+				width: 60px;
+				height: 60px;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%);
+				border-radius: 50%;
+				opacity: 0.3;
+				z-index: -1;
+			}
+
+			.tower.t1 {
+				background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="%234682B4" stroke="%231E90FF" stroke-width="5"/><circle cx="50" cy="50" r="25" fill="%231E90FF"/></svg>');
+			}
+
+			.tower.t1::after {
+				background-color: #1e90ff;
+			}
+
+			.tower.t2 {
+				background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect x="20" y="20" width="60" height="60" fill="%235F9EA0" stroke="%232F4F4F" stroke-width="5"/><rect x="35" y="35" width="30" height="30" fill="%232F4F4F"/></svg>');
+			}
+
+			.tower.t2::after {
+				background-color: #2f4f4f;
+			}
+
+			.tower.t3 {
+				background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><polygon points="50,10 90,90 10,90" fill="%236495ED" stroke="%23483D8B" stroke-width="5"/><circle cx="50" cy="50" r="15" fill="%23483D8B"/></svg>');
+			}
+
+			.tower.t3::after {
+				background-color: #483d8b;
+			}
+
+			.zombie {
+				position: absolute;
+				width: 30px;
+				height: 50px;
+				background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect x="30" y="20" width="40" height="60" rx="10" fill="%23006400" stroke="%23004d00" stroke-width="3"/><circle cx="50" cy="40" r="15" fill="%23006400" stroke="%23004d00" stroke-width="3"/><circle cx="40" cy="35" r="3" fill="black"/><circle cx="60" cy="35" r="3" fill="black"/><path d="M40,50 Q50,60 60,50" stroke="black" stroke-width="2" fill="none"/></svg>');
+				background-size: contain;
+				background-repeat: no-repeat;
+				z-index: 5;
+				bottom: 80px;
+				left: -50px;
+			}
+
+			.bullet {
+				position: absolute;
+				width: 8px;
+				height: 8px;
+				background-color: gold;
+				border-radius: 50%;
+				z-index: 8;
+			}
+
+			#ui {
+				position: absolute;
+				top: 10px;
+				left: 10px;
+				background-color: rgba(0, 0, 0, 0.7);
+				padding: 10px;
+				border-radius: 5px;
+				font-size: 14px;
+			}
+
+			#resources {
+				margin-bottom: 5px;
+			}
+
+			#tower-shop {
+				display: flex;
+				gap: 5px;
+				margin-top: 5px;
+			}
+
+			.tower-btn {
+				width: 40px;
+				height: 40px;
+				background-size: contain;
+				background-repeat: no-repeat;
+				background-position: center;
+				border: 2px solid #444;
+				border-radius: 5px;
+				cursor: pointer;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				font-size: 10px;
+				color: white;
+				text-shadow: 1px 1px 1px black;
+			}
+
+			.tower-btn.t1 {
+				background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="%234682B4" stroke="%231E90FF" stroke-width="5"/><circle cx="50" cy="50" r="25" fill="%231E90FF"/></svg>');
+			}
+
+			.tower-btn.t2 {
+				background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect x="20" y="20" width="60" height="60" fill="%235F9EA0" stroke="%232F4F4F" stroke-width="5"/><rect x="35" y="35" width="30" height="30" fill="%232F4F4F"/></svg>');
+			}
+
+			.tower-btn.t3 {
+				background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><polygon points="50,10 90,90 10,90" fill="%236495ED" stroke="%23483D8B" stroke-width="5"/><circle cx="50" cy="50" r="15" fill="%23483D8B"/></svg>');
+			}
+
+			#game-over {
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%);
+				background-color: rgba(0, 0, 0, 0.9);
+				padding: 20px;
+				border-radius: 10px;
+				text-align: center;
+				display: none;
+				z-index: 100;
+			}
+
+			#start-screen {
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				background-color: rgba(0, 0, 0, 0.8);
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				align-items: center;
+				z-index: 200;
+				text-align: center;
+				padding: 20px;
+			}
+
+			#controls {
+				position: absolute;
+				bottom: 10px;
+				width: 100%;
+				display: flex;
+				justify-content: center;
+				gap: 20px;
+			}
+
+			.control-btn {
+				width: 60px;
+				height: 60px;
+				background-color: rgba(0, 0, 0, 0.5);
+				color: white;
+				border: 2px solid #444;
+				border-radius: 50%;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				font-size: 20px;
+				cursor: pointer;
+			}
+
+			.control-btn:active {
+				background-color: rgba(255, 255, 255, 0.2);
+			}
+
+			@media (min-width: 768px) {
+				#game-container {
+					height: 500px;
+				}
+
+				#controls {
+					display: none;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<div id="game-container">
+			<div id="path"></div>
+			<div id="base">
+				<span>BASE</span>
+				<div class="health-bar" id="base-health"></div>
+			</div>
+
+			<div id="ui">
+				<div id="resources">💰 <span id="gold">150</span></div>
+				<div id="tower-shop">
+					<div class="tower-btn t1" data-cost="50" data-type="t1">$50</div>
+					<div class="tower-btn t2" data-cost="100" data-type="t2">$100</div>
+					<div class="tower-btn t3" data-cost="150" data-type="t3">$150</div>
+				</div>
+			</div>
+
+			<div id="game-over">
+				<h2>GAME OVER</h2>
+				<p>Wave: <span id="final-wave">1</span></p>
+				<p>Score: <span id="final-score">0</span></p>
+				<button id="restart-btn">Play Again</button>
+			</div>
+
+			<div id="start-screen">
+				<h1>ZOMBIE DEFENSE TD</h1>
+				<p>Build towers to stop the zombie horde!</p>
+				<p>• Tap tower buttons to select</p>
+				<p>• Tap screen to place</p>
+				<p>• Earn $ by killing zombies</p>
+				<button id="start-btn">START GAME</button>
+			</div>
+		</div>
+
+		<div id="controls">
+			<button class="control-btn" id="sell-btn">$</button>
+			<button class="control-btn" id="upgrade-btn">↑</button>
+		</div>
+
+		<script>
+			// Game elements
+			const gameContainer = document.getElementById("game-container");
+			const base = document.getElementById("base");
+			const baseHealth = document.getElementById("base-health");
+			const goldDisplay = document.getElementById("gold");
+			const towerShop = document.getElementById("tower-shop");
+			const gameOverScreen = document.getElementById("game-over");
+			const finalWaveDisplay = document.getElementById("final-wave");
+			const finalScoreDisplay = document.getElementById("final-score");
+			const restartBtn = document.getElementById("restart-btn");
+			const startScreen = document.getElementById("start-screen");
+			const startBtn = document.getElementById("start-btn");
+			const sellBtn = document.getElementById("sell-btn");
+			const upgradeBtn = document.getElementById("upgrade-btn");
+
+			// Game variables
+			let gold = 150;
+			let baseHP = 100;
+			let wave = 1;
+			let score = 0;
+			let zombies = [];
+			let towers = [];
+			let bullets = [];
+			let isPlacingTower = false;
+			let selectedTower = null;
+			let currentTowerType = null;
+			let currentTowerCost = 0;
+			let isGameOver = false;
+			let gameInterval;
+
+			// Tower types
+			const towerTypes = {
+				t1: {
+					name: "Basic Tower",
+					damage: 10,
+					range: 120,
+					speed: 1000,
+					cost: 50,
+					upgradeCost: 75,
+					level: 1,
+				},
+				t2: {
+					name: "Cannon",
+					damage: 20,
+					range: 150,
+					speed: 800,
+					cost: 100,
+					upgradeCost: 125,
+					level: 1,
+				},
+				t3: {
+					name: "Sniper",
+					damage: 40,
+					range: 200,
+					speed: 1500,
+					cost: 150,
+					upgradeCost: 200,
+					level: 1,
+				},
+			};
+
+			// Initialize game
+			function initGame() {
+				gold = 150;
+				baseHP = 100;
+				wave = 1;
+				score = 0;
+				zombies = [];
+				towers = [];
+				bullets = [];
+				isGameOver = false;
+
+				goldDisplay.textContent = gold;
+				baseHealth.style.width = "100%";
+				gameOverScreen.style.display = "none";
+
+				// Clear existing elements
+				document
+					.querySelectorAll(".tower, .zombie, .bullet")
+					.forEach((el) => el.remove());
+
+				// Start game loop
+				if (gameInterval) clearInterval(gameInterval);
+				gameInterval = setInterval(updateGame, 30);
+
+				// Start first wave
+				setTimeout(startWave, 2000);
+			}
+
+			// Start a new wave
+			function startWave() {
+				if (isGameOver) return;
+
+				const zombieCount = 3 + wave;
+				const spawnDelay = 1200 - Math.min(wave * 50, 800);
+
+				for (let i = 0; i < zombieCount; i++) {
+					setTimeout(() => {
+						if (!isGameOver) spawnZombie();
+					}, i * spawnDelay);
+				}
+
+				// Next wave starts when all zombies are dead
+				setTimeout(() => {
+					if (zombies.length === 0 && !isGameOver) {
+						wave++;
+						setTimeout(startWave, 3000);
+					}
+				}, zombieCount * spawnDelay + 3000);
+			}
+
+			// Spawn a zombie
+			function spawnZombie() {
+				const zombie = document.createElement("div");
+				zombie.classList.add("zombie");
+				gameContainer.appendChild(zombie);
+
+				const zombieSpeed = 0.5 + wave * 0.05;
+				const zombieHealth = 20 + wave * 5;
+
+				zombies.push({
+					element: zombie,
+					x: -50,
+					y: gameContainer.offsetHeight - 130,
+					speed: zombieSpeed,
+					health: zombieHealth,
+					maxHealth: zombieHealth,
+					bounty: 10 + wave * 2,
+				});
+			}
+
+			// Place a tower
+			function placeTower(x, y) {
+				if (!isPlacingTower || gold < currentTowerCost) return;
+
+				gold -= currentTowerCost;
+				goldDisplay.textContent = gold;
+
+				const tower = document.createElement("div");
+				tower.classList.add("tower", currentTowerType);
+				tower.style.left = x + "px";
+				tower.style.top = y + "px";
+				gameContainer.appendChild(tower);
+
+				towers.push({
+					element: tower,
+					x: x,
+					y: y,
+					type: currentTowerType,
+					cooldown: 0,
+					level: 1,
+					damage: towerTypes[currentTowerType].damage,
+					range: towerTypes[currentTowerType].range,
+					speed: towerTypes[currentTowerType].speed,
+				});
+
+				isPlacingTower = false;
+				currentTowerType = null;
+			}
+
+			// Sell a tower
+			function sellTower() {
+				if (!selectedTower || isPlacingTower) return;
+
+				const towerIndex = towers.findIndex((t) => t.element === selectedTower);
+				if (towerIndex !== -1) {
+					// Refund 70% of cost
+					const refund = Math.floor(
+						towerTypes[towers[towerIndex].type].cost * 0.7
+					);
+					gold += refund;
+					goldDisplay.textContent = gold;
+
+					selectedTower.remove();
+					towers.splice(towerIndex, 1);
+					selectedTower = null;
+				}
+			}
+
+			// Upgrade a tower
+			function upgradeTower() {
+				if (!selectedTower || isPlacingTower) return;
+
+				const tower = towers.find((t) => t.element === selectedTower);
+				if (tower && gold >= towerTypes[tower.type].upgradeCost * tower.level) {
+					gold -= towerTypes[tower.type].upgradeCost * tower.level;
+					goldDisplay.textContent = gold;
+
+					tower.level++;
+					tower.damage = Math.floor(
+						towerTypes[tower.type].damage * (1 + tower.level * 0.3)
+					);
+					tower.range = towerTypes[tower.type].range * (1 + tower.level * 0.1);
+					tower.speed = towerTypes[tower.type].speed * (1 - tower.level * 0.05);
+
+					// Visual upgrade indicator
+					selectedTower.style.transform = `translate(-50%, -50%) scale(${
+						1 + tower.level * 0.1
+					})`;
+				}
+			}
+
+			// Tower shoots at zombie
+			function towerShoot(tower, zombie) {
+				const bullet = document.createElement("div");
+				bullet.classList.add("bullet");
+				bullet.style.left = tower.x + "px";
+				bullet.style.top = tower.y + "px";
+				gameContainer.appendChild(bullet);
+
+				bullets.push({
+					element: bullet,
+					x: tower.x,
+					y: tower.y,
+					target: zombie,
+					damage: tower.damage,
+					speed: 10,
+				});
+			}
+
+			// Update game state
+			function updateGame() {
+				if (isGameOver) return;
+
+				// Move zombies
+				zombies.forEach((zombie, index) => {
+					zombie.x += zombie.speed;
+					zombie.element.style.left = zombie.x + "px";
+
+					// Check if zombie reached base
+					if (zombie.x > gameContainer.offsetWidth - 100) {
+						baseHP -= 10;
+						baseHealth.style.width = baseHP + "%";
+						zombie.element.remove();
+						zombies.splice(index, 1);
+
+						if (baseHP <= 0) {
+							endGame();
+						}
+					}
+				});
+
+				// Tower targeting
+				towers.forEach((tower) => {
+					if (tower.cooldown <= 0) {
+						// Find closest zombie in range
+						const closestZombie = zombies.reduce((closest, zombie) => {
+							const distance = Math.sqrt(
+								Math.pow(zombie.x - tower.x, 2) +
+									Math.pow(zombie.y - tower.y, 2)
+							);
+
+							if (
+								distance < tower.range &&
+								(!closest || distance < closest.distance)
+							) {
+								return { zombie, distance };
+							}
+							return closest;
+						}, null);
+
+						if (closestZombie) {
+							towerShoot(tower, closestZombie.zombie);
+							tower.cooldown = tower.speed;
+						}
+					} else {
+						tower.cooldown -= 30;
+					}
+				});
+
+				// Move bullets
+				bullets.forEach((bullet, index) => {
+					if (!bullet.target.element.parentNode) {
+						// Target died before bullet hit
+						bullet.element.remove();
+						bullets.splice(index, 1);
+						return;
+					}
+
+					const dx = bullet.target.x - bullet.x;
+					const dy = bullet.target.y - bullet.y;
+					const distance = Math.sqrt(dx * dx + dy * dy);
+
+					if (distance < 10) {
+						// Hit zombie
+						bullet.target.health -= bullet.damage;
+						bullet.element.remove();
+						bullets.splice(index, 1);
+
+						if (bullet.target.health <= 0) {
+							// Zombie died
+							gold += bullet.target.bounty;
+							score += bullet.target.bounty * 2;
+							goldDisplay.textContent = gold;
+							bullet.target.element.remove();
+							zombies.splice(zombies.indexOf(bullet.target), 1);
+						}
+					} else {
+						// Move bullet toward target
+						bullet.x += (dx / distance) * bullet.speed;
+						bullet.y += (dy / distance) * bullet.speed;
+						bullet.element.style.left = bullet.x + "px";
+						bullet.element.style.top = bullet.y + "px";
+					}
+				});
+			}
+
+			// End game
+			function endGame() {
+				isGameOver = true;
+				clearInterval(gameInterval);
+				finalWaveDisplay.textContent = wave;
+				finalScoreDisplay.textContent = score;
+				gameOverScreen.style.display = "block";
+			}
+
+			// Event listeners
+			gameContainer.addEventListener("click", (e) => {
+				const rect = gameContainer.getBoundingClientRect();
+				const x = e.clientX - rect.left;
+				const y = e.clientY - rect.top;
+
+				if (isPlacingTower) {
+					placeTower(x, y);
+				} else {
+					// Select tower
+					selectedTower = null;
+					towers.forEach((tower) => {
+						const distance = Math.sqrt(
+							Math.pow(x - tower.x, 2) + Math.pow(y - tower.y, 2)
+						);
+
+						if (distance < 30) {
+							selectedTower = tower.element;
+						}
+					});
+				}
+			});
+
+			towerShop.addEventListener("click", (e) => {
+				if (e.target.classList.contains("tower-btn")) {
+					isPlacingTower = true;
+					selectedTower = null;
+					currentTowerType = e.target.dataset.type;
+					currentTowerCost = parseInt(e.target.dataset.cost);
+				}
+			});
+
+			sellBtn.addEventListener("click", sellTower);
+			upgradeBtn.addEventListener("click", upgradeTower);
+			restartBtn.addEventListener("click", initGame);
+			startBtn.addEventListener("click", () => {
+				startScreen.style.display = "none";
+				initGame();
+			});
+		</script>
+	</body>
+</html>

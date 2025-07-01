@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>SKON Games - Fun for Everyone!</title>
+		<style>
+			* {
+				margin: 0;
+				padding: 0;
+				box-sizing: border-box;
+				font-family: "Arial Rounded MT Bold", "Arial", sans-serif;
+			}
+
+			body {
+				background-color: #f0f2f5;
+				color: #333;
+			}
+
+			header {
+				background: linear-gradient(135deg, #6e48aa, #9d50bb);
+				color: white;
+				padding: 20px 0;
+				text-align: center;
+				box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+			}
+
+			.logo {
+				font-size: 2.5rem;
+				font-weight: bold;
+				margin-bottom: 10px;
+				text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+			}
+
+			.tagline {
+				font-size: 1.2rem;
+				opacity: 0.9;
+			}
+
+			.container {
+				max-width: 1200px;
+				margin: 30px auto;
+				padding: 0 20px;
+			}
+
+			.games-grid {
+				display: grid;
+				grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+				gap: 25px;
+				margin-top: 30px;
+			}
+
+			.game-card {
+				background: white;
+				border-radius: 10px;
+				overflow: hidden;
+				box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+				transition: transform 0.3s, box-shadow 0.3s;
+				cursor: pointer;
+			}
+
+			.game-card:hover {
+				transform: translateY(-5px);
+				box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+			}
+
+			.game-thumbnail {
+				width: 100%;
+				height: auto;
+				object-fit: contain;
+				border-bottom: 3px solid #6e48aa;
+			}
+
+			.game-info {
+				padding: 15px;
+			}
+
+			.game-title {
+				font-size: 1.2rem;
+				margin-bottom: 8px;
+				color: #444;
+			}
+
+			.game-description {
+				font-size: 0.9rem;
+				color: #666;
+				margin-bottom: 12px;
+			}
+
+			.play-button {
+				display: inline-block;
+				background: linear-gradient(135deg, #6e48aa, #9d50bb);
+				color: white;
+				padding: 8px 15px;
+				border-radius: 20px;
+				text-decoration: none;
+				font-weight: bold;
+				font-size: 0.9rem;
+				transition: transform 0.2s;
+			}
+
+			.play-button:hover {
+				transform: scale(1.05);
+			}
+
+			.category-filter {
+				display: flex;
+				justify-content: center;
+				flex-wrap: wrap;
+				gap: 10px;
+				margin-bottom: 20px;
+			}
+
+			.category-btn {
+				padding: 8px 15px;
+				background: white;
+				border: none;
+				border-radius: 20px;
+				cursor: pointer;
+				font-weight: bold;
+				box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+				transition: all 0.2s;
+			}
+
+			.category-btn:hover,
+			.category-btn.active {
+				background: #6e48aa;
+				color: white;
+			}
+
+			footer {
+				text-align: center;
+				padding: 20px;
+				margin-top: 50px;
+				background-color: #333;
+				color: white;
+			}
+
+			@media (max-width: 768px) {
+				.games-grid {
+					grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+				}
+
+				.logo {
+					font-size: 2rem;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<header>
+			<div class="logo">SKON GAMES</div>
+			<div class="tagline">Fun games for everyone!</div>
+		</header>
+
+		<div class="container">
+			<div class="category-filter">
+				<button class="category-btn active" data-category="all">
+					All Games
+				</button>
+				<button class="category-btn" data-category="adventure">
+					Adventure
+				</button>
+				<button class="category-btn" data-category="action">Action</button>
+				<button class="category-btn" data-category="kids">For Kids</button>
+			</div>
+
+			<div class="games-grid">
+				<!-- Game 1 -->
+				<div class="game-card" data-category="action kids">
+					<img
+						src="https://thumbs2.imgbox.com/af/27/UPSwJ8gx_t.png"
+						alt="Pixel Jumper"
+						class="game-thumbnail"
+					/>
+					<div class="game-info">
+						<h3 class="game-title">Pixel Jumper</h3>
+						<p class="game-description">
+							Jump through platforms and collect coins in this retro-style
+							adventure!
+						</p>
+						<a href="pixeljumper.html" class="play-button">Play Now</a>
+					</div>
+				</div>
+
+				<!-- Game 2 -->
+
+				<!-- Game 3 -->
+				<div class="game-card" data-category="action">
+					<img
+						src="https://thumbs2.imgbox.com/50/0b/h9uDQYHm_t.png"
+						alt="Space Shooter"
+						class="game-thumbnail"
+					/>
+					<div class="game-info">
+						<h3 class="game-title">Space Shooter</h3>
+						<p class="game-description">
+							Defend your spaceship against alien invaders in this action-packed
+							shooter.
+						</p>
+						<a href="space.html" class="play-button">Play Now</a>
+					</div>
+				</div>
+
+				<!-- Game 4 -->
+				<div class="game-card" data-category="adventure kids">
+					<img
+						src="https://thumbs2.imgbox.com/e1/bb/nrRh4KIe_t.png"
+						alt="Dino Rush"
+						class="game-thumbnail"
+					/>
+					<div class="game-info">
+						<h3 class="game-title">Dino Rush</h3>
+						<p class="game-description">
+							Help the dinosaur run and jump over obstacles in this endless
+							runner.
+						</p>
+						<a href="dinorush.html" class="play-button">Play Now</a>
+					</div>
+				</div>
+
+				<!-- Game 6 -->
+				<div class="game-card" data-category="action">
+					<img
+						src="https://thumbs2.imgbox.com/19/68/CFxBT9Or_t.png"
+						alt="Zombie Defense"
+						class="game-thumbnail"
+					/>
+					<div class="game-info">
+						<h3 class="game-title">Zombie Defense</h3>
+						<p class="game-description">
+							Build towers and defend your base against waves of zombies.
+						</p>
+						<a href="zombie.html" class="play-button">Play Now</a>
+					</div>
+				</div>
+
+				<!-- Game 7 -->
+				<div class="game-card" data-category="kids">
+					<img
+						src="https://thumbs2.imgbox.com/1d/73/GhcMMmKA_t.png"
+						alt="Animal Pairs"
+						class="game-thumbnail"
+					/>
+					<div class="game-info">
+						<h3 class="game-title">Animal Pairs</h3>
+						<p class="game-description">
+							Match cute animal pairs in this fun game for young children.
+						</p>
+						<a href="memorycatcher.html" class="play-button">Play Now</a>
+					</div>
+				</div>
+
+				<!-- Add more game cards as needed -->
+			</div>
+		</div>
+
+		<footer>&copy; 2023 SKON Games. All rights reserved.</footer>
+
+		<script>
+			// Category filtering functionality
+			document.querySelectorAll(".category-btn").forEach((btn) => {
+				btn.addEventListener("click", function () {
+					// Update active button
+					document
+						.querySelectorAll(".category-btn")
+						.forEach((b) => b.classList.remove("active"));
+					this.classList.add("active");
+
+					const category = this.dataset.category;
+					const gameCards = document.querySelectorAll(".game-card");
+
+					gameCards.forEach((card) => {
+						if (
+							category === "all" ||
+							card.dataset.category.includes(category)
+						) {
+							card.style.display = "block";
+						} else {
+							card.style.display = "none";
+						}
+					});
+				});
+			});
+
+			// Simple animation when page loads
+			document.addEventListener("DOMContentLoaded", () => {
+				const cards = document.querySelectorAll(".game-card");
+				cards.forEach((card, index) => {
+					setTimeout(() => {
+						card.style.opacity = "1";
+						card.style.transform = "translateY(0)";
+					}, 100 * index);
+				});
+			});
+		</script>
+	</body>
+</html>
