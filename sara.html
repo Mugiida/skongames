@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>SARA</title>
+		<style>
+			body {
+				margin: 0;
+				padding: 0;
+				background-color: #000;
+				color: #fff;
+				font-family: "Courier New", monospace;
+				overflow: hidden;
+				height: 100vh;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				cursor: none;
+			}
+
+			#game-container {
+				position: relative;
+				width: 100%;
+				height: 100%;
+			}
+
+			#age-gate {
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%);
+				text-align: center;
+				z-index: 100;
+				background-color: rgba(0, 0, 0, 0.7);
+				padding: 30px;
+				border-radius: 10px;
+				border: 1px solid #ff0000;
+				max-width: 500px;
+				animation: pulse 2s infinite;
+			}
+
+			@keyframes pulse {
+				0% {
+					box-shadow: 0 0 10px #ff0000;
+				}
+				50% {
+					box-shadow: 0 0 20px #ff0000;
+				}
+				100% {
+					box-shadow: 0 0 10px #ff0000;
+				}
+			}
+
+			h1 {
+				color: #ff0000;
+				font-size: 2.5rem;
+				margin-bottom: 30px;
+				text-shadow: 0 0 10px #ff0000;
+			}
+
+			.btn {
+				background-color: #ff0000;
+				color: white;
+				border: none;
+				padding: 10px 20px;
+				margin: 10px;
+				cursor: pointer;
+				font-family: "Courier New", monospace;
+				font-size: 1.2rem;
+				border-radius: 5px;
+				transition: all 0.3s;
+			}
+
+			.btn:hover {
+				background-color: #990000;
+				transform: scale(1.05);
+			}
+
+			#message {
+				margin-top: 30px;
+				font-size: 1.5rem;
+				line-height: 1.6;
+				color: #fff;
+				opacity: 0;
+				transition: opacity 2s;
+			}
+
+			#message.show {
+				opacity: 1;
+			}
+
+			#background {
+				position: absolute;
+				width: 100%;
+				height: 100%;
+				background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="4" stitchTiles="stitch"/><feColorMatrix type="matrix" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 0.5 0"/></filter><rect width="100%" height="100%" filter="url(%23noise)"/></svg>');
+				opacity: 0.3;
+				z-index: -1;
+			}
+
+			#static {
+				position: absolute;
+				width: 100%;
+				height: 100%;
+				background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><filter id="static"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="4" stitchTiles="stitch"/><feColorMatrix type="matrix" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 0.1 0"/></filter><rect width="100%" height="100%" filter="url(%23static)"/></svg>');
+				opacity: 0;
+				z-index: 10;
+				pointer-events: none;
+				animation: static 0.1s infinite;
+			}
+
+			@keyframes static {
+				0% {
+					opacity: 0.1;
+				}
+				50% {
+					opacity: 0.2;
+				}
+				100% {
+					opacity: 0.1;
+				}
+			}
+
+			#glitch {
+				position: absolute;
+				width: 100%;
+				height: 100%;
+				background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><filter id="displacement"><feTurbulence type="turbulence" baseFrequency="0.01" numOctaves="1" result="turbulence"/><feDisplacementMap in2="turbulence" in="SourceGraphic" scale="0" xChannelSelector="R" yChannelSelector="G"/></filter><rect width="100%" height="100%" filter="url(%23displacement)"/></svg>');
+				opacity: 0;
+				z-index: 5;
+				pointer-events: none;
+			}
+
+			#audio-control {
+				position: fixed;
+				bottom: 20px;
+				right: 20px;
+				z-index: 1000;
+				color: #ff0000;
+				cursor: pointer;
+			}
+
+			#hidden-audio {
+				display: none;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="game-container">
+			<div id="background"></div>
+			<div id="static"></div>
+			<div id="glitch"></div>
+
+			<div id="age-gate">
+				<h1>SARA</h1>
+				<p style="font-size: 1.2rem; margin-bottom: 30px">
+					This experience contains disturbing content. Are you 18 or older?
+				</p>
+				<button class="btn" id="yes-btn">YES, I AM 18+</button>
+				<button class="btn" id="no-btn">NO, I'M UNDER 18</button>
+				<div id="message"></div>
+			</div>
+		</div>
+
+		<div id="audio-control">🔊</div>
+
+		<audio src="theme.mp3" id="hidden-audio" loop></audio>
+		<audio id="laugh-audio" src="evil.mp3"></audio>
+
+		<script>
+			// DOM elements
+			const yesBtn = document.getElementById("yes-btn");
+			const noBtn = document.getElementById("no-btn");
+			const message = document.getElementById("message");
+			const background = document.getElementById("background");
+			const static = document.getElementById("static");
+			const glitch = document.getElementById("glitch");
+			const audioControl = document.getElementById("audio-control");
+			const bgAudio = document.getElementById("hidden-audio");
+			const laughAudio = document.getElementById("laugh-audio");
+
+			// Start background audio (muted by default due to autoplay policies)
+			bgAudio.volume = 0.3;
+			laughAudio.volume = 0.7;
+
+			// Audio toggle control
+			let audioEnabled = false;
+			audioControl.addEventListener("click", () => {
+				audioEnabled = !audioEnabled;
+				audioControl.textContent = audioEnabled ? "🔊" : "🔇";
+				bgAudio.muted = !audioEnabled;
+			});
+
+			// Age verification
+			yesBtn.addEventListener("click", () => {
+				// Start background audio if enabled
+				if (audioEnabled) {
+					bgAudio.play().catch((e) => console.log("Audio play failed:", e));
+				}
+
+				// Initial response
+				message.innerHTML = "Checking...<br><br>";
+
+				// Fake loading delay
+				setTimeout(() => {
+					message.innerHTML += "> Age verification complete<br>";
+
+					setTimeout(() => {
+						message.innerHTML += "> Access granted<br><br>";
+						message.classList.add("show");
+
+						setTimeout(() => {
+							message.innerHTML += "OK, I'll continue...<br>";
+
+							setTimeout(() => {
+								// Dramatic effect
+								static.style.opacity = "0.5";
+								glitch.style.opacity = "1";
+
+								// Play evil laugh
+								if (audioEnabled) {
+									laughAudio
+										.play()
+										.catch((e) => console.log("Audio play failed:", e));
+								}
+
+								setTimeout(() => {
+									message.innerHTML +=
+										'<span style="color:#ff0000">hahaha sara rani naarfek mkch 18</span>';
+
+									// Intensify effects
+									static.style.animation = "static 0.05s infinite";
+									background.style.animation = "pulse 0.5s infinite";
+									document.getElementById("laugh-audio").play();
+
+									// Prepare for game start
+									setTimeout(() => {
+										// Here you would typically transition to the actual game
+										alert("skon fibelo bik...");
+									}, 3000);
+								}, 1000);
+							}, 1000);
+						}, 1000);
+					}, 1500);
+				}, 2000);
+			});
+
+			noBtn.addEventListener("click", () => {
+				message.innerHTML = "You need to turn 18. Come back when you're ready.";
+				message.classList.add("show");
+
+				// Fade out effect
+				setTimeout(() => {
+					document.body.style.transition = "opacity 2s";
+					document.body.style.opacity = "0";
+
+					setTimeout(() => {
+						alert("o5rojj 3liya...");
+						// In a real implementation, you would redirect to another page
+					}, 2000);
+				}, 2000);
+			});
+			// Wait for user interaction before playing
+			document.addEventListener(
+				"click",
+				function () {
+					document.getElementById("hidden-audio").play();
+				},
+				{ once: true }
+			);
+		</script>
+	</body>
+</html>
